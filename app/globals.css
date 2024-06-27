@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ml--15px-mb {
+    margin-left: -15px;
+  }
+}
