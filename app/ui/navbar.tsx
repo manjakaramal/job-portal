@@ -19,8 +19,6 @@ export default function NavBar(){
                 <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2 fixed bottom-0 w-full ml--13px-mb px-3 md:px-0  md:relative md:bottom-auto md:w-auto mb-2">
                     <NavLinks />                    
                 </div>
-
-                
             </nav>
         </>
     )
