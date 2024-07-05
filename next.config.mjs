@@ -15,6 +15,10 @@ const withPWAConfig = withPWA({
     cacheStartUrl: true, // Cache the start URL for faster initial load and offline availability
 });
 
-const nextConfig = {};
+const nextConfig = {
+    images: {
+      domains: ['i.ibb.co'],
+    },
+};
 
 export default withPWAConfig(nextConfig);
