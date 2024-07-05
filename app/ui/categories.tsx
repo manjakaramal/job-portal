@@ -21,7 +21,6 @@ export default function Categories() {
                 height={760}
                 className="w-8 h-8 md:w-16 md:h-16 lg:w-16 lg:h-16"
                 alt={`Image for ${category.name}`}
-                loading="lazy"
               />
             ) : (
               <Image
@@ -30,7 +29,6 @@ export default function Categories() {
                 height={760}
                 className="w-8 h-8 md:w-16 md:h-16 lg:w-16 lg:h-16"
                 alt="Placeholder image"
-                loading="lazy"
               />
             )}
           </div>
