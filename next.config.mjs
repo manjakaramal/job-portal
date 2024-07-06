@@ -17,8 +17,16 @@ const withPWAConfig = withPWA({
 
 const nextConfig = {
     images: {
-      domains: ['i.ibb.co'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'i.ibb.co',
+                pathname: '**', // Match all paths under i.ibb.co
+            },
+        ],
     },
 };
+
+
 
 export default withPWAConfig(nextConfig);

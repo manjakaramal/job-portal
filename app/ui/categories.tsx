@@ -1,10 +1,10 @@
 'use client';
 
-import { useCategories } from '@/app/lib/actions';
 import Image from 'next/image';
+import { useFetchCategories } from '@/app/lib/data';
 
 export default function Categories() {
-  const categories = useCategories();
+  const categories = useFetchCategories();
 
   return (
     <div className="overflow-x-auto snap-x snap-mandatory flex space-x-4 hide-scrollbar">
@@ -21,6 +21,7 @@ export default function Categories() {
                 height={760}
                 className="w-8 h-8 md:w-16 md:h-16 lg:w-16 lg:h-16"
                 alt={`Image for ${category.name}`}
+                priority
               />
             ) : (
               <Image
@@ -29,6 +30,7 @@ export default function Categories() {
                 height={760}
                 className="w-8 h-8 md:w-16 md:h-16 lg:w-16 lg:h-16"
                 alt="Placeholder image"
+                priority
               />
             )}
           </div>
