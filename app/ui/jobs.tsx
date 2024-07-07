@@ -15,12 +15,12 @@ export default function Jobs() {
       hasMore={hasMore} // Whether there are more items to load
       loader={<h4>Loading...</h4>} // Loading indicator
       endMessage={<p>No more jobs to load</p>} // Message when all jobs have been loaded
-      className="grid md:grid-cols-4 gap-4 mt-2"
+      className="grid md:grid-cols-3 gap-4 mt-2"
     >
       {jobs.map((job, index) => (
         <div key={`${job.id}-${index}`} className="rounded-md bg-gray-50 p-3 hover:bg-sky-100 hover:text-blue-600">
           <div className="text-base md:text-lg font-medium">{job.name}</div>
-          <div className="flex items-center text-sm pt-1"> 
+          <div className="flex items-center text-sm md:text-sm pt-1"> 
             <RiBuilding2Line className="inline-block mr-1" />
             {job.company.name}
           </div>
