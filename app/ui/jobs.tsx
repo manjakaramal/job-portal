@@ -1,5 +1,5 @@
 'use client';
-
+// Import necessary dependencies
 import React from 'react';
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
@@ -28,6 +28,9 @@ const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
     </div>
   );
 });
+
+// Assigning displayName for JobItem component
+JobItem.displayName = 'JobItem';
 
 const Jobs = () => {
   const { jobs, hasMore, fetchJobs } = useFetchJobs();
