@@ -18,8 +18,8 @@ export default function Jobs() {
       className="grid md:grid-cols-4 gap-4 mt-2"
     >
       {jobs.map((job, index) => (
-        <div key={`${job.id}-${index}`} className="rounded-md bg-gray-50 p-5 hover:bg-sky-100 hover:text-blue-600">
-          <div className="text-lg font-medium">{job.name}</div>
+        <div key={`${job.id}-${index}`} className="rounded-md bg-gray-50 p-3 hover:bg-sky-100 hover:text-blue-600">
+          <div className="text-base md:text-lg font-medium">{job.name}</div>
           <div className="flex items-center text-sm pt-1"> 
             <RiBuilding2Line className="inline-block mr-1" />
             {job.company.name}
