@@ -8,7 +8,7 @@ export default function Categories() {
 
   return (
     <div className="overflow-x-auto snap-x snap-mandatory flex space-x-4 hide-scrollbar">
-      {categories.map(category => (
+      {categories.map((category, index) => (
         <div
           key={category.id}
           className="snap-center min-w-[130px] md:min-w-[250px] gap-1 rounded-md bg-gray-50 py-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600"
@@ -20,7 +20,8 @@ export default function Categories() {
               height={760}
               className="w-8 h-8 md:w-16 md:h-16 lg:w-16 lg:h-16"
               alt={`Image for ${category.name}`}
-              priority
+              priority={index < 3 ? true : false}
+              loading={index < 3 ? "eager" : "lazy"}
             />
           </div>
           <div className='text-center pt-1 text-xs overflow-hidden whitespace-nowrap'>

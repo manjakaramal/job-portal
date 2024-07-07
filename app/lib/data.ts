@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Category, Job } from '@/app/lib/types';
 
 export function useFetchCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []); // Fetch categories on component mount
-
-  async function fetchCategories() {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('https://manjakaramal.pythonanywhere.com/api/categories/');
       if (!response.ok) {
@@ -19,7 +15,11 @@ export function useFetchCategories() {
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   return categories;
 }
@@ -29,11 +29,7 @@ export function useFetchJobs() {
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  useEffect(() => {
-    fetchJobs();
-  }, []); // Fetch jobs on component mount
-
-  async function fetchJobs() {
+  const fetchJobs = useCallback(async () => {
     try {
       const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}`);
       if (!response.ok) {
@@ -50,7 +46,11 @@ export function useFetchJobs() {
     } catch (error) {
       console.error('Error fetching jobs:', error);
     }
-  }
+  }, [page]);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
 
   return { jobs, page, hasMore, fetchJobs };
 }
