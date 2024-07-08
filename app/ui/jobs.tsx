@@ -16,7 +16,7 @@ const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
 
       <div className="rounded-md bg-gray-50 p-3 hover:bg-sky-100 hover:text-blue-600">
         <div className="text-base md:text-lg font-medium">{job.name}</div>
-        <div className="flex items-center text-sm md:text-sm pt-1"> 
+        <div className="flex items-center text-sm md:text-base pt-1"> 
           <RiBuilding2Line className="inline-block mr-1" />
           {job.company.name}
         </div>
