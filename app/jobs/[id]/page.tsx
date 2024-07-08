@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
-import { useFetchJob } from '@/app/lib/data'; // Ensure correct path to your data file
+import { useFetchJobId } from '@/app/lib/data'; // Ensure correct path to your data file
 
 const JobDetail: React.FC = () => {
   const params = useParams() as { id: string }; // Explicitly typing params to include id as a string
   const { id } = params;
 
-  const { job, loading, error } = useFetchJob(id);
+  const { job, loading, error } = useFetchJobId(id);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Failed to load</div>;

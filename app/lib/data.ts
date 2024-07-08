@@ -55,7 +55,7 @@ export function useFetchJobs() {
   return { jobs, page, hasMore, fetchJobs };
 }
 
-export function useFetchJob(id: string) {
+export function useFetchJobId(id: string) {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
