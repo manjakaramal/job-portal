@@ -7,25 +7,29 @@ import { CiCalendarDate } from "react-icons/ci";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useFetchJobs } from '@/app/lib/data';
 import { Job } from '@/app/lib/types'; // Ensure correct path to your types
+import Link from 'next/link';
 
 // Memoized JobItem component
 const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
   return (
-    <div className="rounded-md bg-gray-50 p-3 hover:bg-sky-100 hover:text-blue-600">
-      <div className="text-base md:text-lg font-medium">{job.name}</div>
-      <div className="flex items-center text-sm md:text-sm pt-1"> 
-        <RiBuilding2Line className="inline-block mr-1" />
-        {job.company.name}
+    <Link href={`/jobs/${job.id}`}>
+
+      <div className="rounded-md bg-gray-50 p-3 hover:bg-sky-100 hover:text-blue-600">
+        <div className="text-base md:text-lg font-medium">{job.name}</div>
+        <div className="flex items-center text-sm md:text-sm pt-1"> 
+          <RiBuilding2Line className="inline-block mr-1" />
+          {job.company.name}
+        </div>
+        <div className="flex items-center text-xs pt-1"> 
+          <IoLocationOutline className="inline-block mr-1" />
+          {job.location.name}
+        </div>
+        <div className="flex items-center text-xs pt-2"> 
+          <CiCalendarDate className="inline-block mr-1" />
+          {job.posted}
+        </div>
       </div>
-      <div className="flex items-center text-xs pt-1"> 
-        <IoLocationOutline className="inline-block mr-1" />
-        {job.location.name}
-      </div>
-      <div className="flex items-center text-xs pt-2"> 
-        <CiCalendarDate className="inline-block mr-1" />
-        {job.posted}
-      </div>
-    </div>
+    </Link>
   );
 });
 
