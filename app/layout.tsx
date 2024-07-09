@@ -31,6 +31,8 @@ export default function RootLayout({
           <div className="flex-grow pl-3 pr-3 md:overflow-y-auto md:p-12">
             {children} 
             <br />
+            <br />
+            <br />
           </div>
         </div>
         

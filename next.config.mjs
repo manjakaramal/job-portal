@@ -20,8 +20,8 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'i.ibb.co',
-                pathname: '**', // Match all paths under i.ibb.co
+                hostname: '*',
+                pathname: '**', // Match all paths 
             },
         ],
     },

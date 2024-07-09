@@ -1,18 +1,39 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useFetchJobId } from '@/app/lib/data'; // Ensure correct path to your data file
+import { useFetchJobId } from '@/app/lib/data';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const JobDetail: React.FC = () => {
-  const params = useParams() as { id: string }; // Explicitly typing params to include id as a string
-  const { id } = params;
+  const { id } = useParams() as { id: string }; // Explicitly typing params to include id as a string
 
   const { job, loading, error } = useFetchJobId(id);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageLoadError, setImageLoadError] = useState(false);
+
+  useEffect(() => {
+    if (job?.image_url) {
+      setImageUrl(cleanImageUrl(job.image_url));
+    }
+  }, [job]);
+
+  const cleanImageUrl = (url: string): string | null => {
+    try {
+      const cleanedUrl = url.replace(/<[^>]*>?/gm, '');
+      return cleanedUrl.startsWith('http://') || cleanedUrl.startsWith('https://') ? cleanedUrl : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleImageError = () => {
+    setImageLoadError(true);
+  };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Failed to load</div>;
+  if (error) return <div>Failed to load job details</div>;
   if (!job) return <div>No job found</div>;
 
   return (
@@ -23,19 +44,29 @@ const JobDetail: React.FC = () => {
         <div className="text-sm md:text-base font-medium">Location: {job.location.name}</div>
       </div>
 
-      <div className='p-6 mt-3 rounded-md bg-gray-50'>
-        <Image
-          src={job.image_url || "https://i.ibb.co/S0jmJ9h/digital-marketing.png"}
-          width={1000}
-          height={1000}
-          className="w-full h-full"
-          alt={`Image for ${job.name}`}
-          loading="lazy"
-        />
-      </div>
+      {imageUrl ? (
+        <div className='md:p-6 p-1 mt-3 rounded-md bg-gray-50'>
+          <Link href={imageUrl}>
+            <Image
+              src={imageUrl}
+              width={1000}
+              height={1000}
+              className="w-full h-full"
+              alt={`Image for ${job.name}`}
+              priority
+              onError={handleImageError}
+            />
+          </Link>
+          {imageLoadError && (
+            <div className="text-red-500 mt-2">Failed to load image</div>
+          )}
+        </div>
+      ) : (
+        <div className='md:p-6 p-1 mt-3 rounded-md bg-gray-50'>
+          <div className="text-red-500">Invalid image URL format</div>
+        </div>
+      )}
     </>
-    
-    
   );
 };
 
