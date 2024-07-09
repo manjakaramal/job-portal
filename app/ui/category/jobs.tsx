@@ -52,7 +52,7 @@ const Jobs: React.FC<JobsProps> = ({ selectedSubCategory }) => {
       next={() => {}} // Implement fetchJobs for infinite scroll if needed
       hasMore={false} // Set true if there's more data to load
       loader={<h4>Loading...</h4>}
-      endMessage={<p>No more jobs to load</p>}
+      endMessage={<p className='text-center'>No more jobs to load</p>}
       className="grid md:grid-cols-3 gap-4 mt-2"
     >
       {jobs.map((job, index) => (
