@@ -45,12 +45,12 @@ const JobDetail: React.FC = () => {
     <>
       <div className="md:p-6 p-2 rounded-md bg-gray-50">
         <h1 className="text-base md:text-lg font-medium">{job.name}</h1>
-        <div className="text-sm md:text-base">Company: {job.company.name}</div>
-        <div className="text-xs md:text-base">Location: {job.location.name}</div>
+        <div className="text-sm md:text-base">Company: {job.company?.name ?? 'Unknown Company'}</div>
+        <div className="text-xs md:text-base">Location: {job.location?.name ?? 'Unknown Location'}</div>
       </div>
 
-      {imageUrl ? (
-        <div className='md:p-10 p-1 mt-3 rounded-md flex justify-center bg-gray-50 '>
+      {imageUrl && !imageLoadError && (
+        <div className='md:p-10 p-1 mt-3 rounded-md flex justify-center bg-gray-50'>
           <Link href={`/jobs/${job.id}/imageurl`}>
             <Image
               src={imageUrl}
@@ -62,13 +62,11 @@ const JobDetail: React.FC = () => {
               onError={handleImageError}
             />
           </Link>
-          {imageLoadError && (
-            <div className="text-red-500 mt-2">Failed to load image</div>
-          )}
         </div>
-      ) : (
-        <div className='md:p-6 p-1 mt-3 rounded-md bg-gray-50'>
-          <div className="text-red-500">Invalid image URL format</div>
+      )}
+      {imageLoadError && (
+        <div className="md:p-6 p-1 mt-3 rounded-md bg-gray-50">
+          <div className="text-red-500">Failed to load image</div>
         </div>
       )}
     </>
