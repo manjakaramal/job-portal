@@ -22,11 +22,11 @@ const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
         <div className="text-base md:text-lg font-medium">{job.name}</div>
         <div className="flex items-center text-sm md:text-base pt-1">
           <RiBuilding2Line className="inline-block mr-1" />
-          {job.company.name}
+          {job.company?.name ?? 'Unknown Company'}
         </div>
         <div className="flex items-center text-xs pt-1">
           <IoLocationOutline className="inline-block mr-1" />
-          {job.location.name}
+          {job.location?.name ?? 'Unknown Location'}
         </div>
         <div className="flex items-center text-xs pt-2">
           <CiCalendarDate className="inline-block mr-1" />

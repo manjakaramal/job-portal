@@ -113,8 +113,6 @@ export function useFetchCategoryIdSubCategories(categoryId: string) {
   return { subcategories, ...status };
 }
 
-
-
 export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number | null) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -148,4 +146,18 @@ export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number
   }, [fetchCategoryIdJobs, categoryId, subcategoryId]);
 
   return { jobs, loading, error };
+}
+
+export async function fetchJobSearchResults(query: string, page: number): Promise<{ items: Job[], count: number }> {
+  try {
+    const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/search?query=${query}&page=${page}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch jobs:", error);
+    return { items: [], count: 0 };
+  }
 }

@@ -1,9 +1,8 @@
+import SearchJobs from '@/app/ui/search/search-job'
 export default function Page() {
     return (
       <>
-        <div>
-          <h1>search</h1>
-        </div>
+        <SearchJobs />
       </>
     );
 }
