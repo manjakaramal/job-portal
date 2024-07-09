@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Category, Job } from '@/app/lib/types';
+import { Category, Job, SubCategory } from '@/app/lib/types';
 
 export function useFetchCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -81,4 +81,71 @@ export function useFetchJobId(id: string) {
   }, [fetchJob]);
 
   return { job, loading, error };
+}
+
+
+
+export function useFetchCategoryIdSubCategories(categoryId: string) {
+  const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
+  const [status, setStatus] = useState<{ loading: boolean; error: boolean }>({ loading: true, error: false });
+
+  const fetchCategoryIdSubCategories = useCallback(async () => {
+    try {
+      const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/categories/${categoryId}/subcategories/`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch subcategories');
+      }
+      const data = await response.json();
+      setSubcategories(data);
+      setStatus({ loading: false, error: false });
+    } catch (error) {
+      console.error('Error fetching subcategories:', error);
+      setStatus({ loading: false, error: true });
+    }
+  }, [categoryId]);
+
+  useEffect(() => {
+    if (categoryId) {
+      fetchCategoryIdSubCategories();
+    }
+  }, [fetchCategoryIdSubCategories, categoryId]);
+
+  return { subcategories, ...status };
+}
+
+
+
+export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number | null) {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+
+  const fetchCategoryIdJobs = useCallback(async () => {
+    try {
+      let url = `https://manjakaramal.pythonanywhere.com/api/categories/${categoryId}/jobs/`;
+      if (subcategoryId !== null) {
+        url += `?sub_category=${subcategoryId}`;
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch jobs');
+      }
+      const data = await response.json();
+      setJobs(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      setError(true);
+      setLoading(false);
+    }
+  }, [categoryId, subcategoryId]);
+
+  useEffect(() => {
+    if (categoryId) {
+      fetchCategoryIdJobs();
+    }
+  }, [fetchCategoryIdJobs, categoryId, subcategoryId]);
+
+  return { jobs, loading, error };
 }

@@ -4,6 +4,13 @@ export interface Category {
   image_url: string;
 }
 
+export interface SubCategory {
+  id: number;
+  category: number;
+  name: string;
+  image_url: string | null;
+}
+
 export interface Job {
   id: number;
   category: {
