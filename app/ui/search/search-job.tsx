@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { Job } from '@/app/lib/types'; // Adjust the import path according to your project structure
@@ -117,9 +115,14 @@ export default function SearchJobs() {
     return pageNumbers;
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSearch(1);
+  };
+
   return (
     <div>
-      <div className="flex items-center space-x-2">
+      <form onSubmit={handleSubmit} className="flex items-center space-x-2">
         <input 
           type="text" 
           className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
@@ -129,12 +132,11 @@ export default function SearchJobs() {
         />
         <button 
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="button"
-          onClick={() => handleSearch(1)}
+          type="submit"
         >
           <BiSearch className="text-lg"/>
         </button>
-      </div>
+      </form>
       <div className="mt-4">
         {loading ? (
           <p>Loading...</p>
