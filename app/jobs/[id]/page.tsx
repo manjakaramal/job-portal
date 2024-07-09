@@ -44,13 +44,13 @@ const JobDetail: React.FC = () => {
   return (
     <>
       <div className="md:p-6 p-2 rounded-md bg-gray-50">
-        <h1 className="text-sm md:text-lg font-medium">{job.name}</h1>
-        <div className="text-xs md:text-base">Company: {job.company.name}</div>
+        <h1 className="text-base md:text-lg font-medium">{job.name}</h1>
+        <div className="text-sm md:text-base">Company: {job.company.name}</div>
         <div className="text-xs md:text-base">Location: {job.location.name}</div>
       </div>
 
       {imageUrl ? (
-        <div className='md:p-6 p-1 mt-3 rounded-md bg-gray-50'>
+        <div className='md:p-10 p-1 mt-3 rounded-md flex justify-center bg-gray-50 '>
           <Link href={`/jobs/${job.id}/imageurl`}>
             <Image
               src={imageUrl}

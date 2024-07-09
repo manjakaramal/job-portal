@@ -55,7 +55,7 @@ const JobDetail: React.FC = () => {
     <>
       
       {imageUrl ? (
-        <div className='flex justify-center items-center h-5/6'>
+        <div className='flex justify-center items-center md:h-screen h-5/6'>
           
           <Image
             src={imageUrl}
