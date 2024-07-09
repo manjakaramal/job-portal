@@ -35,6 +35,16 @@ const JobDetail: React.FC = () => {
     setImageLoadError(true);
   }, []);
 
+  useEffect(() => {
+    // Set the body background color to black when the component mounts
+    document.body.style.backgroundColor = 'black';
+
+    // Reset the body background color when the component unmounts
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
+  }, []);
+
   // Return loading, error, or no job found states
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Failed to load job details</div>;
@@ -43,25 +53,20 @@ const JobDetail: React.FC = () => {
   // Return job details and image
   return (
     <>
-      <div className="md:p-6 p-2 rounded-md bg-gray-50">
-        <h1 className="text-sm md:text-lg font-medium">{job.name}</h1>
-        <div className="text-xs md:text-base">Company: {job.company.name}</div>
-        <div className="text-xs md:text-base">Location: {job.location.name}</div>
-      </div>
-
+      
       {imageUrl ? (
-        <div className='md:p-6 p-1 mt-3 rounded-md bg-gray-50'>
-          <Link href={`/jobs/${job.id}/imageurl`}>
-            <Image
-              src={imageUrl}
-              width={1000}
-              height={1000}
-              className="w-full h-full"
-              alt={`Image for ${job.name}`}
-              priority
-              onError={handleImageError}
-            />
-          </Link>
+        <div className='flex justify-center items-center h-5/6'>
+          
+          <Image
+            src={imageUrl}
+            width={1000}
+            height={1000}
+            className="object-contain max-w-full max-h-full"
+            alt={`Image for ${job.name}`}
+            priority
+            onError={handleImageError}
+          />
+          
           {imageLoadError && (
             <div className="text-red-500 mt-2">Failed to load image</div>
           )}
