@@ -69,6 +69,6 @@ const Jobs: React.FC<JobsProps> = ({ selectedSubCategory }) => {
       ))}
     </InfiniteScroll>
   );
-};
+}; 
 
 export default Jobs;
