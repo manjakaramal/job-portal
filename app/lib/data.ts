@@ -24,14 +24,19 @@ export function useFetchCategories() {
   return categories;
 }
 
+const PAGE_SIZE = 10; // Set your desired page size here
+
 export function useFetchJobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [pageRequestCount, setPageRequestCount] = useState<number>(0); // State to track page request count
 
   const fetchJobs = useCallback(async () => {
     try {
-      const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}`);
+      const url = `https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}&page_size=${PAGE_SIZE}`;
+      console.log('Fetching jobs from:', url); // Log the request URL
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to fetch jobs');
       }
@@ -39,7 +44,8 @@ export function useFetchJobs() {
       if (Array.isArray(data.items)) {
         setJobs(prevJobs => [...prevJobs, ...data.items]);
         setPage(prevPage => prevPage + 1);
-        setHasMore(data.items.length > 0); // Update hasMore based on whether new items were received
+        setHasMore(data.items.length === PAGE_SIZE); // Check if fetched items reach the page size
+        setPageRequestCount(prevCount => prevCount + 1); // Increment page request count
       } else {
         throw new Error('Fetched data items is not an array');
       }
@@ -52,7 +58,12 @@ export function useFetchJobs() {
     fetchJobs();
   }, [fetchJobs]);
 
-  return { jobs, page, hasMore, fetchJobs };
+  useEffect(() => {
+    // Log the page request count after each update
+    console.log(`Page requests count: ${pageRequestCount}`);
+  }, [pageRequestCount]);
+
+  return { jobs, hasMore, fetchJobs, pageRequestCount };
 }
 
 export function useFetchJobId(id: string) {
@@ -113,16 +124,20 @@ export function useFetchCategoryIdSubCategories(categoryId: string) {
   return { subcategories, ...status };
 }
 
-export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number | null) {
+
+
+export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number | null, pageSize: number = 10) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(1);
 
-  const fetchCategoryIdJobs = useCallback(async () => {
+  const fetchCategoryIdJobs = useCallback(async (page = 1) => {
     try {
-      let url = `https://manjakaramal.pythonanywhere.com/api/categories/${categoryId}/jobs/`;
+      let url = `https://manjakaramal.pythonanywhere.com/api/categories/${categoryId}/jobs/?page=${page}&page_size=${pageSize}`;
       if (subcategoryId !== null) {
-        url += `?sub_category=${subcategoryId}`;
+        url += `&sub_category=${subcategoryId}`;
       }
 
       const response = await fetch(url);
@@ -130,23 +145,31 @@ export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number
         throw new Error('Failed to fetch jobs');
       }
       const data = await response.json();
-      setJobs(data);
+
+      if (!data.items || !Array.isArray(data.items)) {
+        throw new Error('Expected data.items to be an array');
+      }
+
+      setJobs(prevJobs => page === 1 ? data.items : [...prevJobs, ...data.items]);
+      setHasMore(data.items.length === pageSize);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching jobs:', error);
       setError(true);
       setLoading(false);
     }
-  }, [categoryId, subcategoryId]);
+  }, [categoryId, subcategoryId, pageSize]);
 
   useEffect(() => {
     if (categoryId) {
-      fetchCategoryIdJobs();
+      setPage(1); // Reset to first page on category change
+      fetchCategoryIdJobs(1);
     }
   }, [fetchCategoryIdJobs, categoryId, subcategoryId]);
 
-  return { jobs, loading, error };
+  return { jobs, loading, error, hasMore, fetchCategoryIdJobs, setPage };
 }
+
 
 export async function fetchJobSearchResults(query: string, page: number): Promise<{ items: Job[], count: number }> {
   try {

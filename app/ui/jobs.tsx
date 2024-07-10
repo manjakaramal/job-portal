@@ -1,5 +1,5 @@
 'use client';
-// Import necessary dependencies
+
 import React from 'react';
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
@@ -13,7 +13,6 @@ import Link from 'next/link';
 const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
   return (
     <Link href={`/jobs/${job.id}`}>
-
       <div className="rounded-md bg-gray-50 h-full p-3 hover:bg-sky-100 hover:text-blue-600">
         <div className="text-base md:text-lg font-medium">{job.name}</div>
         <div className="flex items-center text-sm md:text-base pt-1"> 
@@ -56,3 +55,4 @@ const Jobs = () => {
 };
 
 export default Jobs;
+

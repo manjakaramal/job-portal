@@ -1,7 +1,6 @@
-// jobs.tsx
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
@@ -41,21 +40,33 @@ JobItem.displayName = 'JobItem';
 
 const Jobs: React.FC<JobsProps> = ({ selectedSubCategory }) => {
   const { id } = useParams() as { id: string };
-  const { jobs, loading, error } = useFetchCategoryIdJobs(id, selectedSubCategory);
+  const { jobs, loading, error, hasMore, fetchCategoryIdJobs, setPage } = useFetchCategoryIdJobs(id, selectedSubCategory);
 
-  if (loading) return <div>Loading...</div>;
+  useEffect(() => {
+    setPage(1); // Reset page to 1 when categoryId or selectedSubCategory changes
+  }, [id, selectedSubCategory]);
+
+  if (loading && jobs.length === 0) return <div>Loading...</div>;
   if (error) return <div>Failed to load jobs</div>;
+
+  const fetchMoreJobs = () => {
+    setPage(prevPage => {
+      const newPage = prevPage + 1;
+      fetchCategoryIdJobs(newPage);
+      return newPage;
+    });
+  };
 
   return (
     <InfiniteScroll
       dataLength={jobs.length}
-      next={() => {}} // Implement fetchJobs for infinite scroll if needed
-      hasMore={false} // Set true if there's more data to load
+      next={fetchMoreJobs}
+      hasMore={hasMore}
       loader={<h4>Loading...</h4>}
       endMessage={<p className='text-center'>No more jobs to load</p>}
       className="grid md:grid-cols-3 gap-4 mt-2"
     >
-      {jobs.map((job, index) => (
+      {Array.isArray(jobs) && jobs.map((job, index) => (
         <JobItem key={`${job.id}-${index}`} job={job} />
       ))}
     </InfiniteScroll>
