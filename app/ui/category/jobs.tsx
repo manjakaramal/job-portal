@@ -6,7 +6,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useFetchCategoryIdJobs } from '@/app/lib/data';
-import { Job } from '@/app/lib/types'; // Ensure correct path to your types
+import { Job } from '@/app/lib/types';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -69,6 +69,6 @@ const Jobs: React.FC<JobsProps> = ({ selectedSubCategory }) => {
       ))}
     </InfiniteScroll>
   );
-}; 
+};
 
 export default Jobs;
