@@ -24,20 +24,19 @@ export function useFetchCategories() {
   return categories;
 }
 
-
-
-
-
-const PAGE_SIZE = 10; // Set your desired page size here
-
 export function useFetchJobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchJobs = useCallback(async () => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
+
     try {
-      const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}&page_size=${PAGE_SIZE}`);
+      const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}`);
       if (!response.ok) {
         throw new Error('Failed to fetch jobs');
       }
@@ -45,14 +44,16 @@ export function useFetchJobs() {
       if (Array.isArray(data.items)) {
         setJobs(prevJobs => [...prevJobs, ...data.items]);
         setPage(prevPage => prevPage + 1);
-        setHasMore(data.items.length === PAGE_SIZE); // Check if fetched items reach the page size
+        setHasMore(jobs.length + data.items.length < data.count); // Check if there are more items to load
       } else {
         throw new Error('Fetched data items is not an array');
       }
     } catch (error) {
       console.error('Error fetching jobs:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [page]);
+  }, [page, hasMore, isLoading]);
 
   useEffect(() => {
     fetchJobs();
@@ -60,8 +61,6 @@ export function useFetchJobs() {
 
   return { jobs, hasMore, fetchJobs };
 }
-
-
 
 export function useFetchJobId(id: string) {
   const [job, setJob] = useState<Job | null>(null);

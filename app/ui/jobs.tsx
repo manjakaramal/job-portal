@@ -1,15 +1,13 @@
 'use client';
-
 import React from 'react';
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useFetchJobs } from '@/app/lib/data';
-import { Job } from '@/app/lib/types'; // Ensure correct path to your types
+import { Job } from '@/app/lib/types';
 import Link from 'next/link';
 
-// Memoized JobItem component
 const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
   return (
     <Link href={`/jobs/${job.id}`}>
@@ -32,7 +30,6 @@ const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
   );
 });
 
-// Assigning displayName for JobItem component
 JobItem.displayName = 'JobItem';
 
 const Jobs = () => {
@@ -55,4 +52,3 @@ const Jobs = () => {
 };
 
 export default Jobs;
-
