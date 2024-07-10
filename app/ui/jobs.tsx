@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
@@ -32,21 +32,65 @@ const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
 
 JobItem.displayName = 'JobItem';
 
-const Jobs: React.FC<{ onJobsLoaded?: () => void }> = ({ onJobsLoaded }) => {
+const Jobs = () => {
   const { jobs, hasMore, fetchJobs } = useFetchJobs();
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (jobs.length > 0 && onJobsLoaded) {
-      onJobsLoaded();
+    const handleScroll = () => {
+      sessionStorage.setItem('jobsScrollPosition', String(window.scrollY));
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        loaderRef.current &&
+        loaderRef.current.getBoundingClientRect().top <= window.innerHeight + 100
+      ) {
+        fetchJobs();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [fetchJobs]);
+
+  useEffect(() => {
+    // Restore scroll position on component mount
+    const savedScrollPosition = sessionStorage.getItem('jobsScrollPosition');
+    if (savedScrollPosition) {
+      window.scrollTo(0, parseInt(savedScrollPosition));
     }
-  }, [jobs, onJobsLoaded]);
+  }, []);
+
+  useEffect(() => {
+    // After jobs are fetched and jobs state updates, restore scroll position
+    const handleJobsUpdate = () => {
+      if (jobs.length > 0) {
+        const savedScrollPosition = sessionStorage.getItem('jobsScrollPosition');
+        if (savedScrollPosition) {
+          window.scrollTo(0, parseInt(savedScrollPosition));
+        }
+      }
+    };
+
+    handleJobsUpdate();
+  }, [jobs]);
 
   return (
     <InfiniteScroll
       dataLength={jobs.length}
       next={fetchJobs}
       hasMore={hasMore}
-      loader={<h4>Loading...</h4>}
+      loader={<div ref={loaderRef} className="text-center mt-4 mb-8">Loading...</div>}
       endMessage={<p className='text-center'>No more jobs to load</p>}
       className="grid md:grid-cols-3 gap-4 mt-2"
     >
