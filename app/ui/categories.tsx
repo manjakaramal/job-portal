@@ -1,11 +1,17 @@
 'use client';
-
 import Image from 'next/image';
 import { useFetchCategories } from '@/app/lib/data';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
-export default function Categories() {
+const Categories: React.FC<{ onCategoriesLoaded?: () => void }> = ({ onCategoriesLoaded }) => {
   const categories = useFetchCategories();
+
+  useEffect(() => {
+    if (categories.length > 0 && onCategoriesLoaded) {
+      onCategoriesLoaded();
+    }
+  }, [categories, onCategoriesLoaded]);
 
   return (
     <div className="overflow-x-auto snap-x snap-mandatory flex space-x-4 hide-scrollbar">
@@ -32,4 +38,6 @@ export default function Categories() {
       ))}
     </div>
   );
-}
+};
+
+export default Categories;

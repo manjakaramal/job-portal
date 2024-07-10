@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
@@ -32,8 +32,14 @@ const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
 
 JobItem.displayName = 'JobItem';
 
-const Jobs = () => {
+const Jobs: React.FC<{ onJobsLoaded?: () => void }> = ({ onJobsLoaded }) => {
   const { jobs, hasMore, fetchJobs } = useFetchJobs();
+
+  useEffect(() => {
+    if (jobs.length > 0 && onJobsLoaded) {
+      onJobsLoaded();
+    }
+  }, [jobs, onJobsLoaded]);
 
   return (
     <InfiniteScroll
