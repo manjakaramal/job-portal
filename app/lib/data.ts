@@ -122,16 +122,17 @@ export function useFetchCategoryIdSubCategories(categoryId: string) {
 
 
 
-export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number | null, pageSize: number = 10) {
+export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number | null) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   const fetchCategoryIdJobs = useCallback(async (page = 1) => {
     try {
-      let url = `https://manjakaramal.pythonanywhere.com/api/categories/${categoryId}/jobs/?page=${page}&page_size=${pageSize}`;
+      let url = `https://manjakaramal.pythonanywhere.com/api/categories/${categoryId}/jobs/?page=${page}`;
       if (subcategoryId !== null) {
         url += `&sub_category=${subcategoryId}`;
       }
@@ -147,14 +148,17 @@ export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number
       }
 
       setJobs(prevJobs => page === 1 ? data.items : [...prevJobs, ...data.items]);
-      setHasMore(data.items.length === pageSize);
+      setHasMore(data.items.length > 0 && jobs.length + data.items.length < data.count);
       setLoading(false);
+      if (page === 1) {
+        setTotalCount(data.count);
+      }
     } catch (error) {
       console.error('Error fetching jobs:', error);
       setError(true);
       setLoading(false);
     }
-  }, [categoryId, subcategoryId, pageSize]);
+  }, [categoryId, subcategoryId]);
 
   useEffect(() => {
     if (categoryId) {
@@ -163,7 +167,7 @@ export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number
     }
   }, [fetchCategoryIdJobs, categoryId, subcategoryId]);
 
-  return { jobs, loading, error, hasMore, fetchCategoryIdJobs, setPage };
+  return { jobs, loading, error, hasMore, fetchCategoryIdJobs, setPage, page };
 }
 
 

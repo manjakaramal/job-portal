@@ -40,7 +40,7 @@ JobItem.displayName = 'JobItem';
 
 const Jobs: React.FC<JobsProps> = ({ selectedSubCategory }) => {
   const { id } = useParams() as { id: string };
-  const { jobs, loading, error, hasMore, fetchCategoryIdJobs, setPage } = useFetchCategoryIdJobs(id, selectedSubCategory);
+  const { jobs, loading, error, hasMore, fetchCategoryIdJobs, setPage, page } = useFetchCategoryIdJobs(id, selectedSubCategory);
 
   useEffect(() => {
     setPage(1); // Reset page to 1 when categoryId or selectedSubCategory changes
@@ -50,11 +50,9 @@ const Jobs: React.FC<JobsProps> = ({ selectedSubCategory }) => {
   if (error) return <div>Failed to load jobs</div>;
 
   const fetchMoreJobs = () => {
-    setPage(prevPage => {
-      const newPage = prevPage + 1;
-      fetchCategoryIdJobs(newPage);
-      return newPage;
-    });
+    const newPage = page + 1;
+    setPage(newPage);
+    fetchCategoryIdJobs(newPage);
   };
 
   return (
