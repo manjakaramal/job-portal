@@ -1,27 +1,16 @@
 'use client';
 
-import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useFetchCategories } from '@/app/lib/data';
 import Link from 'next/link';
 
-const Categories = () => {
+export default function Categories() {
   const categories = useFetchCategories();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      sessionStorage.setItem('categoriesScrollPosition', String(window.scrollY));
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   return (
     <div className="overflow-x-auto snap-x snap-mandatory flex space-x-4 hide-scrollbar">
       {categories.map(category => (
-        <Link key={category.id} href={`/category/${category.id}/jobs`}>
+        <Link key={category.id} href={`category/${category.id}/jobs`}>
           <div
             className="snap-center min-w-[130px] md:min-w-[250px] gap-1 rounded-md bg-gray-50 py-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600"
           >
@@ -43,6 +32,4 @@ const Categories = () => {
       ))}
     </div>
   );
-};
-
-export default Categories;
+}
