@@ -16,7 +16,7 @@ export default function SearchJobs() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const resultsPerPage = 10; // Assume 10 items per page, adjust accordingly
+  const resultsPerPage = 20; // Assume 10 items per page, adjust accordingly
 
   const handleSearch = async (pageNumber: number) => {
     setLoading(true);
