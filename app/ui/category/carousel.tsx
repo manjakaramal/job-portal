@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { GrPrevious, GrNext } from "react-icons/gr";
 import Image from 'next/image';
 import { useFetchCategories } from '@/app/lib/data';
@@ -10,6 +10,9 @@ const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const categories = useFetchCategories();
+  const carouselRef = useRef(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const handleResize = () => {
     if (window.innerWidth >= 768) {
@@ -40,10 +43,36 @@ const Carousel = () => {
     return () => clearInterval(interval);
   }, [itemsPerPage, categories.length]);
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart === null || touchEnd === null) return;
+    if (touchStart - touchEnd > 50) {
+      next();
+    }
+    if (touchStart - touchEnd < -50) {
+      prev();
+    }
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
   return (
     <div className="flex items-center justify-center">
       <button onClick={prev} className="p-2 bg-gray-50 rounded-full"><GrPrevious /></button>
-      <div className="overflow-hidden w-full mx-4">
+      <div
+        className="overflow-hidden w-full mx-4"
+        ref={carouselRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <div
           className="flex transition-transform duration-300"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -55,25 +84,20 @@ const Carousel = () => {
             >
               {categories.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage).map((category) => (
                 <Link key={category.id} href={`category/${category.id}/jobs`}>
-                    <div
-                 
-                  className="flex flex-col items-center justify-center h-32 bg-gray-50 hover:bg-sky-100 hover:text-blue-600 rounded-md "
-                >
+                  <div className="flex flex-col items-center justify-center h-32 bg-gray-50 hover:bg-sky-100 hover:text-blue-600 rounded-md">
                     <Image
-                        src={category.image_url || "https://i.ibb.co/S0jmJ9h/digital-marketing.png"}
-                        width={1000}
-                        height={760}
-                        className="h-16 w-16 object-cover mb-2"
-                        alt={`Image for ${category.name}`}
-                        loading="lazy"
+                      src={category.image_url || "https://i.ibb.co/S0jmJ9h/digital-marketing.png"}
+                      width={1000}
+                      height={760}
+                      className="h-16 w-16 object-cover mb-2"
+                      alt={`Image for ${category.name}`}
+                      loading="lazy"
                     />
-                  
-                    <div className='text-center pt-1 text-xs overflow-hidden whitespace-nowrap'>
-                        <span className="truncate">{category.name}</span>
+                    <div className='text-center pt-1 text-xs'>
+                      {category.name}
                     </div>
-                </div>
+                  </div>
                 </Link>
-                
               ))}
             </div>
           ))}
