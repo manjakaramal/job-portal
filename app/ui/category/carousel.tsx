@@ -1,18 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { GrPrevious, GrNext } from "react-icons/gr";
 import Image from 'next/image';
 import { useFetchCategories } from '@/app/lib/data';
 import Link from 'next/link';
 
 const Carousel = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const categories = useFetchCategories();
-  const carouselRef = useRef(null);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const handleResize = () => {
     if (window.innerWidth >= 768) {
@@ -30,52 +26,31 @@ const Carousel = () => {
     };
   }, []);
 
-  const next = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % Math.ceil(categories.length / itemsPerPage));
-  };
-
-  const prev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + Math.ceil(categories.length / itemsPerPage)) % Math.ceil(categories.length / itemsPerPage));
-  };
-
   useEffect(() => {
-    const interval = setInterval(next, 7000);
+    const interval = setInterval(() => {
+      if (carouselRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth) {
+          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          carouselRef.current.scrollBy({ left: clientWidth, behavior: 'smooth' });
+        }
+      }
+    }, 3000); // Adjust the interval as needed
+
     return () => clearInterval(interval);
-  }, [itemsPerPage, categories.length]);
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStart === null || touchEnd === null) return;
-    if (touchStart - touchEnd > 50) {
-      next();
-    }
-    if (touchStart - touchEnd < -50) {
-      prev();
-    }
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
+  }, []);
 
   return (
     <div className="flex items-center justify-center">
-      <button onClick={prev} className="p-2 bg-gray-50 rounded-full"><GrPrevious /></button>
       <div
-        className="overflow-hidden w-full mx-4"
+        className="overflow-x-auto w-full mx-1 hide-scrollbar"
         ref={carouselRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        style={{ scrollSnapType: 'x mandatory' }}
       >
         <div
-          className="flex transition-transform duration-300"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          className="flex gap-2"
+          style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
         >
           {Array.from({ length: Math.ceil(categories.length / itemsPerPage) }).map((_, pageIndex) => (
             <div
@@ -84,12 +59,13 @@ const Carousel = () => {
             >
               {categories.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage).map((category) => (
                 <Link key={category.id} href={`category/${category.id}/jobs`}>
-                  <div className="flex flex-col items-center justify-center h-32 bg-gray-50 hover:bg-sky-100 hover:text-blue-600 rounded-md">
+                  <div className="flex flex-col items-center justify-center h-32 bg-gray-50 hover:bg-sky-100 hover:text-blue-600 rounded-md"
+                    style={{ scrollSnapAlign: 'start' }}>
                     <Image
                       src={category.image_url || "https://i.ibb.co/S0jmJ9h/digital-marketing.png"}
                       width={1000}
                       height={760}
-                      className="h-16 w-16 object-cover mb-2"
+                      className="w-8 h-8 md:w-12 md:h-12 lg:w-12 lg:h-12 object-cover mb-2"
                       alt={`Image for ${category.name}`}
                       loading="lazy"
                     />
@@ -103,7 +79,6 @@ const Carousel = () => {
           ))}
         </div>
       </div>
-      <button onClick={next} className="p-2 bg-gray-50 rounded-full"><GrNext /></button>
     </div>
   );
 };
