@@ -36,7 +36,7 @@ const Carousel = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(next, 5000);
+    const interval = setInterval(next, 7000);
     return () => clearInterval(interval);
   }, [itemsPerPage, categories.length]);
 
@@ -55,24 +55,25 @@ const Carousel = () => {
             >
               {categories.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage).map((category) => (
                 <Link key={category.id} href={`category/${category.id}/jobs`}>
-                <div
-                  className="snap-center min-w-[130px] md:min-w-[250px] gap-1 rounded-md bg-gray-50 py-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600"
+                    <div
+                 
+                  className="flex flex-col items-center justify-center h-32 bg-gray-50 hover:bg-sky-100 hover:text-blue-600 rounded-md "
                 >
-                  <div className='flex items-center justify-center'>
                     <Image
-                      src={category.image_url || "https://i.ibb.co/S0jmJ9h/digital-marketing.png"}
-                      width={1000}
-                      height={760}
-                      className="w-8 h-8 md:w-16 md:h-16 lg:w-16 lg:h-16"
-                      alt={`Image for ${category.name}`}
-                      loading="lazy"
+                        src={category.image_url || "https://i.ibb.co/S0jmJ9h/digital-marketing.png"}
+                        width={1000}
+                        height={760}
+                        className="h-16 w-16 object-cover mb-2"
+                        alt={`Image for ${category.name}`}
+                        loading="lazy"
                     />
-                  </div>
-                  <div className='text-center pt-1 text-xs overflow-hidden whitespace-nowrap'>
-                    <span className="truncate">{category.name}</span>
-                  </div>
+                  
+                    <div className='text-center pt-1 text-xs overflow-hidden whitespace-nowrap'>
+                        <span className="truncate">{category.name}</span>
+                    </div>
                 </div>
-              </Link>
+                </Link>
+                
               ))}
             </div>
           ))}
