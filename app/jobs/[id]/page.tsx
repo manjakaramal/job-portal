@@ -35,6 +35,13 @@ const JobDetail: React.FC = () => {
     setImageLoadError(true);
   }, []);
 
+  const [imageloading, setImageLoading] = useState(true);
+
+  // Handle image load event
+  const handleImageLoad = () => {
+    setImageLoading(false); // Hide spinner when image is loaded
+  };
+
   // Return loading, error, or no job found states
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Failed to load job details</div>;
@@ -50,15 +57,23 @@ const JobDetail: React.FC = () => {
       </div>
 
       {imageUrl && !imageLoadError && (
-        <div className='md:p-10 p-1 mt-3 rounded-md flex justify-center bg-gray-50'>
+        <div className='md-px-13rem md:py-10 p-1 mt-3 rounded-md flex justify-center bg-gray-50'>
           <Link href={`/jobs/${job.id}/imageurl`}>
+          
+            {imageloading && (
+              <div className="fixed inset-0 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full border-4 border-black border-t-transparent animate-spin"></div>
+              </div>
+            )}
+
             <Image
               src={imageUrl}
               width={1000}
               height={1000}
-              className="w-full h-full"
+              className={`{w-full h-full ${imageloading ? 'invisible' : 'visible'}}`}
               alt={`Image for ${job.name}`}
               priority
+              onLoad={handleImageLoad} 
               onError={handleImageError}
             />
           </Link>

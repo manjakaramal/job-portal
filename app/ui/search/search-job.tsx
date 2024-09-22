@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { BiSearch } from "react-icons/bi";
-import { Job } from '@/app/lib/types'; // Adjust the import path according to your project structure
-import { fetchJobSearchResults } from '@/app/lib/data'; // Adjust the import path as needed
+import { Job } from '@/app/lib/types';
+import { fetchJobSearchResults } from '@/app/lib/data'; 
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
@@ -16,7 +16,7 @@ export default function SearchJobs() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const resultsPerPage = 20; // Assume 10 items per page, adjust accordingly
+  const resultsPerPage = 20; // Assume 20 items per page, adjust accordingly
 
   const handleSearch = async (pageNumber: number) => {
     setLoading(true);

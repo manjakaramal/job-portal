@@ -20,3 +20,8 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.md-px-13rem {
+  padding-left: 13rem;
+  padding-right: 13rem;
+}

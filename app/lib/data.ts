@@ -24,43 +24,37 @@ export function useFetchCategories() {
   return categories;
 }
 
-export function useFetchJobs() {
+export function useFetchJobs(page: number) {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [count, setCount] = useState<number>(0); // State for count
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
 
   const fetchJobs = useCallback(async () => {
-    if (isLoading || !hasMore) return;
-
-    setIsLoading(true);
-
+    setLoading(true); // Set loading to true before fetching
     try {
       const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}`);
       if (!response.ok) {
         throw new Error('Failed to fetch jobs');
       }
       const data = await response.json();
-      if (Array.isArray(data.items)) {
-        setJobs(prevJobs => [...prevJobs, ...data.items]);
-        setPage(prevPage => prevPage + 1);
-        setHasMore(jobs.length + data.items.length < data.count); // Check if there are more items to load
-      } else {
-        throw new Error('Fetched data items is not an array');
-      }
+      setJobs(data.items); // Set jobs to the items array
+      setCount(data.count); // Set count to the count value from the response
     } catch (error) {
       console.error('Error fetching jobs:', error);
+      setJobs([]);
+      setCount(0); // Reset count on error
     } finally {
-      setIsLoading(false);
+      setLoading(false); // Set loading to false after fetch is complete
     }
-  }, [page, hasMore, isLoading]);
+  }, [page]);
 
   useEffect(() => {
     fetchJobs();
   }, [fetchJobs]);
 
-  return { jobs, hasMore, fetchJobs };
+  return { jobs, count, loading }; // Return jobs, count, and loading state
 }
+
 
 export function useFetchJobId(id: string) {
   const [job, setJob] = useState<Job | null>(null);
@@ -90,8 +84,6 @@ export function useFetchJobId(id: string) {
   return { job, loading, error };
 }
 
-
-
 export function useFetchCategoryIdSubCategories(categoryId: string) {
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [status, setStatus] = useState<{ loading: boolean; error: boolean }>({ loading: true, error: false });
@@ -119,8 +111,6 @@ export function useFetchCategoryIdSubCategories(categoryId: string) {
 
   return { subcategories, ...status };
 }
-
-
 
 export function useFetchCategoryIdJobs(categoryId: string, subcategoryId: number | null) {
   const [jobs, setJobs] = useState<Job[]>([]);
