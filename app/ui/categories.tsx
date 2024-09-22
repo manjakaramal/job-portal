@@ -24,7 +24,7 @@ export default function Categories() {
           >
             <div className='flex items-center justify-center relative'>
               {imageloading && (
-                <div className="absolute flex items-center justify-center w-12 h-12 rounded-full border-4 border-black border-t-transparent animate-spin"></div>
+                <div className="absolute flex items-center justify-center w-7 h-7 rounded-full border-4 border-black border-t-transparent animate-spin"></div>
               )}
               <Image
                 src={category.image_url || "https://i.ibb.co/S0jmJ9h/digital-marketing.png"}
