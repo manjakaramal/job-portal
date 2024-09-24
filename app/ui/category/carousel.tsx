@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 const Carousel = () => {
   const [itemsPerPage, setItemsPerPage] = useState(4);
-  const categories = useFetchCategories();
+  const { categories, isLoading, error } = useFetchCategories();
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const handleResize = () => {
@@ -40,6 +40,14 @@ const Carousel = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  if (isLoading) {
+    return <div>Loading categories...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading categories: {error.message}</div>; // Error state
+  }
 
   return (
     <div className="flex items-center justify-center">

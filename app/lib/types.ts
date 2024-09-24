@@ -69,5 +69,7 @@ export interface Job {
   source: string | null;
 }
 
-export default Job;
-  
+export interface JobResponse {
+  items: Job[]; // Array of Job entries
+  count: number; // Total count of jobs
+}

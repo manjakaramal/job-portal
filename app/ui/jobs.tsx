@@ -9,13 +9,17 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 
 export default function Jobs() {
   const [page, setPage] = useState(1); // State for the current page
-  const { jobs, count, loading } = useFetchJobs(page); // Pass the page to the hook
+  const { jobs, count, isLoading, error } = useFetchJobs(page); // Pass the page to the hook
   const resultsPerPage = 20;
 
   const totalPages = Math.ceil(count / resultsPerPage);
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return <div>Loading jobs...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading jobs: {error.message}</div>; 
   }
 
   return (

@@ -1,87 +1,48 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Category, Job, SubCategory } from '@/app/lib/types';
+import { Category, Job, JobResponse, SubCategory } from '@/app/lib/types';
+import useSWR from 'swr'
+
+/////////////////////////////////// fetcher ///////////////////////////////////
+
+const fetcher = async (...args: [RequestInfo, RequestInit?]): Promise<any> => {
+  const res = await fetch(...args);
+  if (!res.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return res.json();
+};
+
+///////////////////////////////////////////////////////////////////////////////
 
 export function useFetchCategories() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { data, error, isLoading } = useSWR<Category[]>('https://manjakaramal.pythonanywhere.com/api/categories/', fetcher)
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      const response = await fetch('https://manjakaramal.pythonanywhere.com/api/categories/');
-      if (!response.ok) {
-        throw new Error('Failed to fetch categories');
-      }
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
-  return categories;
+  return {
+    categories: data || [],
+    isLoading,
+    error
+  };
 }
 
 export function useFetchJobs(page: number) {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [count, setCount] = useState<number>(0); // State for count
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const { data, error, isLoading } = useSWR<JobResponse>(`https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}`, fetcher);
 
-  const fetchJobs = useCallback(async () => {
-    setLoading(true); // Set loading to true before fetching
-    try {
-      const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/?page=${page}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch jobs');
-      }
-      const data = await response.json();
-      setJobs(data.items); // Set jobs to the items array
-      setCount(data.count); // Set count to the count value from the response
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-      setJobs([]);
-      setCount(0); // Reset count on error
-    } finally {
-      setLoading(false); // Set loading to false after fetch is complete
-    }
-  }, [page]);
-
-  useEffect(() => {
-    fetchJobs();
-  }, [fetchJobs]);
-
-  return { jobs, count, loading }; // Return jobs, count, and loading state
+  return {
+    jobs: data ? data.items : [],
+    count: data ? data.count : 0,
+    isLoading,
+    error
+  };
 }
 
-
 export function useFetchJobId(id: string) {
-  const [job, setJob] = useState<Job | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
-
-  const fetchJob = useCallback(async () => {
-    try {
-      const response = await fetch(`https://manjakaramal.pythonanywhere.com/api/jobs/${id}/`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch job');
-      }
-      const data = await response.json();
-      setJob(data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching job:', error);
-      setError(true);
-      setLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    fetchJob();
-  }, [fetchJob]);
-
-  return { job, loading, error };
+  const { data, error, isLoading } = useSWR<Job>(`https://manjakaramal.pythonanywhere.com/api/jobs/${id}/`, fetcher);
+  
+  return {
+    job: data || null,
+    isLoading,
+    error
+  };
 }
 
 export function useFetchCategoryIdSubCategories(categoryId: string) {

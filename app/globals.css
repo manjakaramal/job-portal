@@ -21,7 +21,7 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (max-width: 768px) {
   .md-px-13rem {
     padding-left: 13rem;
     padding-right: 13rem;

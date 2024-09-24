@@ -6,9 +6,17 @@ import { useFetchCategories } from '@/app/lib/data';
 import Link from 'next/link';
 
 export default function Categories() {
-  const categories = useFetchCategories();
+  const {categories, isLoading, error} = useFetchCategories();
 
   const [imageloading, setImageLoading] = useState(true);
+
+  if (isLoading) {
+    return <div>Loading categories...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading categories: {error.message}</div>; // Error state
+  }
 
   // Handle image load event
   const handleImageLoad = () => {

@@ -9,7 +9,7 @@ import Link from 'next/link';
 const JobDetail: React.FC = () => {
   const { id } = useParams() as { id: string }; // Explicitly typing params to include id as a string
 
-  const { job, loading, error } = useFetchJobId(id);
+  const { job, isLoading, error } = useFetchJobId (id);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageLoadError, setImageLoadError] = useState(false);
 
@@ -43,7 +43,7 @@ const JobDetail: React.FC = () => {
   };
 
   // Return loading, error, or no job found states
-  if (loading) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Failed to load job details</div>;
   if (!job) return <div>No job found</div>;
 
