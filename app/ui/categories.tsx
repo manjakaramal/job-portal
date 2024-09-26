@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
+import Image from 'next/image';
 import { useFetchCategories } from '@/app/lib/data';
 import Link from 'next/link';
 
@@ -9,19 +9,19 @@ export default function Categories() {
   const {categories, isLoading, error} = useFetchCategories();
 
   const [imageloading, setImageLoading] = useState(true);
+  
+  // Handle image load event
+  const handleImageLoad = () => {
+    setImageLoading(false); // Hide spinner when image is loaded
+  };
 
   if (isLoading) {
     return <div>Loading categories...</div>;
   }
 
   if (error) {
-    return <div>Error loading categories: {error.message}</div>; // Error state
+    return <div>Error loading categories: {error.message}</div>;
   }
-
-  // Handle image load event
-  const handleImageLoad = () => {
-    setImageLoading(false); // Hide spinner when image is loaded
-  };
 
   return (
     <div className="overflow-x-auto snap-x snap-mandatory flex space-x-4 hide-scrollbar">
