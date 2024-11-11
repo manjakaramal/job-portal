@@ -1,74 +1,76 @@
 'use client';
-
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { RiBuilding2Line } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiCalendarDate } from "react-icons/ci";
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useFetchCategoryIdJobs } from '@/app/lib/data';
-import { Job } from '@/app/lib/types';
 import Link from 'next/link';
+import { GrPrevious, GrNext } from "react-icons/gr";
 import { useParams } from 'next/navigation';
 
 interface JobsProps {
   selectedSubCategory: number | null;
 }
 
-const JobItem: React.FC<{ job: Job }> = React.memo(({ job }) => {
+export default function Jobs({ selectedSubCategory }: JobsProps) {
+  const { id: categoryId } = useParams();
+  const [page, setPage] = useState(1); // State for the current page
+  const { jobs, count, isLoading, error } = useFetchCategoryIdJobs(Number(categoryId), page, selectedSubCategory);
+  const resultsPerPage = 20;
+
+  const totalPages = Math.ceil(count / resultsPerPage);
+
+  if (isLoading) {
+    return <div>Loading jobs...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading jobs: {error.message}</div>; 
+  }
+
   return (
-    <Link href={`/jobs/${job.id}`}>
-      <div className="rounded-md bg-gray-50 h-full p-3 hover:bg-sky-100 hover:text-blue-600">
-        <div className="text-base md:text-lg font-medium">{job.name}</div>
-        <div className="flex items-center text-sm md:text-base pt-1">
-          <RiBuilding2Line className="inline-block mr-1" />
-          {job.company?.name ?? 'Unknown Company'}
-        </div>
-        <div className="flex items-center text-xs pt-1">
-          <IoLocationOutline className="inline-block mr-1" />
-          {job.location?.name ?? 'Unknown Location'}
-        </div>
-        <div className="flex items-center text-xs pt-2">
-          <CiCalendarDate className="inline-block mr-1" />
-          {job.posted}
-        </div>
+    <>
+      <div className="grid md:grid-cols-3 gap-4 mt-2">
+        {jobs.length > 0 ? (
+          jobs.map(job => (
+            <Link key={job.id} href={`/jobs/${job.id}/detail`} passHref>
+              <div className="rounded-md bg-gray-50 h-full p-3 hover:bg-sky-100 hover:text-blue-600">
+                <div className="text-base md:text-lg font-medium">{job.name}</div>
+                <div className="flex items-center text-sm md:text-base pt-1"> 
+                  <RiBuilding2Line className="inline-block mr-1" />
+                  {job.company?.name ?? 'Unknown Company'}
+                </div>
+                <div className="flex items-center text-xs pt-1"> 
+                  <IoLocationOutline className="inline-block mr-1" />
+                  {job.location?.name ?? 'Unknown Location'}
+                </div>
+                <div className="flex items-center text-xs pt-2"> 
+                  <CiCalendarDate className="inline-block mr-1" />
+                  {job.posted}
+                </div>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <div>No jobs found.</div>
+        )}
       </div>
-    </Link>
+      
+      {/* Pagination controls */}
+      <div className="flex justify-center mt-4">
+        <button
+          className={`mx-1 px-3 py-2 rounded ${page === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
+          onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+          disabled={page === 1}>
+          <GrPrevious />
+        </button>
+        <button
+          className={`mx-1 px-3 py-2 rounded ${page === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
+          onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={page === totalPages}>
+          <GrNext />
+        </button>
+      </div>
+    </>
   );
-});
-
-JobItem.displayName = 'JobItem';
-
-const Jobs: React.FC<JobsProps> = ({ selectedSubCategory }) => {
-  const { id } = useParams() as { id: string };
-  const { jobs, loading, error, hasMore, fetchCategoryIdJobs, setPage, page } = useFetchCategoryIdJobs(id, selectedSubCategory);
-
-  useEffect(() => {
-    setPage(1); // Reset page to 1 when categoryId or selectedSubCategory changes
-  }, [id, selectedSubCategory]);
-
-  if (loading && jobs.length === 0) return <div>Loading...</div>;
-  if (error) return <div>Failed to load jobs</div>;
-
-  const fetchMoreJobs = () => {
-    const newPage = page + 1;
-    setPage(newPage);
-    fetchCategoryIdJobs(newPage);
-  };
-
-  return (
-    <InfiniteScroll
-      dataLength={jobs.length}
-      next={fetchMoreJobs}
-      hasMore={hasMore}
-      loader={<h4>Loading...</h4>}
-      endMessage={<p className='text-center'>No more jobs to load</p>}
-      className="grid md:grid-cols-3 gap-4 mt-2"
-    >
-      {Array.isArray(jobs) && jobs.map((job, index) => (
-        <JobItem key={`${job.id}-${index}`} job={job} />
-      ))}
-    </InfiniteScroll>
-  );
-};
-
-export default Jobs;
+}

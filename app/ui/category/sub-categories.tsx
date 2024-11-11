@@ -1,18 +1,17 @@
-// sub-categories.tsx
 'use client';
 
 import { useFetchCategoryIdSubCategories } from '@/app/lib/data';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { SubCategory } from '@/app/lib/types'; // Ensure correct path to your types
+import { SubCategory } from '@/app/lib/types';
 
 interface SubCategoriesProps {
   onSelectSubCategory: (subcategoryId: number | null) => void;
 }
 
 export default function SubCategories({ onSelectSubCategory }: SubCategoriesProps) {
-  const { id } = useParams() as { id: string };
-  const { subcategories, error } = useFetchCategoryIdSubCategories(id);
+  const { id } = useParams();
+  const { subcategories, error } = useFetchCategoryIdSubCategories(Number(id));
   const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(null);
 
   if (error) return <div>Failed to load subcategories</div>;

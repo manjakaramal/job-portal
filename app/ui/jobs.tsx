@@ -27,7 +27,7 @@ export default function Jobs() {
       <div className="grid md:grid-cols-3 gap-4 mt-2">
         {jobs.length > 0 ? (
           jobs.map(job => (
-            <Link key={job.id} href={`/jobs/${job.id}`} passHref>
+            <Link key={job.id} href={`/jobs/${job.id}/detail`} passHref>
               <div className="rounded-md bg-gray-50 h-full p-3 hover:bg-sky-100 hover:text-blue-600">
                 <div className="text-base md:text-lg font-medium">{job.name}</div>
                 <div className="flex items-center text-sm md:text-base pt-1"> 
